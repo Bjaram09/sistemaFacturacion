@@ -3,23 +3,23 @@ package Models;
 public class Producto {
     private String id;
     private String descripcion;
-    private int min;
-    private int max;
+    private int minCantidad;
+    private int maxCantidad;
     private double precioPorUnidad;
 
     public Producto() {
         this.id = "";
         this.descripcion = "";
-        this.min = 0;
-        this.max = 0;
+        this.minCantidad = 0;
+        this.maxCantidad = 0;
         this.precioPorUnidad = 0.0;
     }
 
-    public Producto(String id, String descripcion, int min, int max, double precioPorUnidad) {
+    public Producto(String id, String descripcion, int minCantidad, int maxCantidad, double precioPorUnidad) {
         this.id = id;
         this.descripcion = descripcion;
-        this.min = min;
-        this.max = max;
+        this.minCantidad = minCantidad;
+        this.maxCantidad = maxCantidad;
         this.precioPorUnidad = precioPorUnidad;
     }
 
@@ -40,19 +40,19 @@ public class Producto {
     }
 
     public int getMin() {
-        return min;
+        return minCantidad;
     }
 
     public void setMin(int min) {
-        this.min = min;
+        this.minCantidad = min;
     }
 
     public int getMax() {
-        return max;
+        return maxCantidad;
     }
 
     public void setMax(int max) {
-        this.max = max;
+        this.maxCantidad = max;
     }
 
     public double getPrecioPorUnidad() {
@@ -69,8 +69,8 @@ public class Producto {
         sb.append("Producto {")
                 .append("id='").append(id).append("', ")
                 .append("descripcion='").append(descripcion).append("', ")
-                .append("min=").append(min).append(", ")
-                .append("max=").append(max).append(", ")
+                .append("min=").append(minCantidad).append(", ")
+                .append("max=").append(maxCantidad).append(", ")
                 .append("precioPorUnidad=").append(precioPorUnidad)
                 .append("}");
         return sb.toString();

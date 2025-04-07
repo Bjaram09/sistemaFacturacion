@@ -22,6 +22,7 @@ public class Cliente {
         this.edad = 0;
         this.correoElectronico = "";
         this.telefonoCasa = "";
+        this.telefonoCelular = "";
     }
 
     public Cliente(String id, String nombre, String primerApellido, String segundoApellido, String genero, String direccion, int edad, String correoElectronico, String telefonoCasa, String telefonoCelular) {
@@ -32,7 +33,11 @@ public class Cliente {
         this.genero = genero;
         this.direccion = direccion;
         this.edad = edad;
+        this.correoElectronico = correoElectronico;
+        this.telefonoCasa = telefonoCasa;
+        this.telefonoCelular = telefonoCelular;
     }
+
 
     public String getId() {
         return id;

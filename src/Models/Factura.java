@@ -3,18 +3,35 @@ package Models;
 import java.util.ArrayList;
 
 public class Factura {
+    private String id;
     private Maestro maestro;
     private ArrayList<Detalle> detalles;
     private double subtotal;
-    private double IVA;
+    private final double IVA = 0.13;
     private double precioFinal;
 
     public Factura() {
+        this.id = "";
         this.maestro = new Maestro();
         this.detalles = new ArrayList<>();
         this.subtotal = 0;
-        this.IVA = 0;
         this.precioFinal = 0;
+    }
+
+    public Factura(String id, Maestro maestro, ArrayList<Detalle> detalles, double subtotal) {
+        this.id = id;
+        this.maestro = maestro;
+        this.detalles = detalles;
+        this.subtotal = subtotal;
+        this.precioFinal = this.subtotal + (this.subtotal * this.IVA);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Maestro getMaestro() {
@@ -45,10 +62,6 @@ public class Factura {
         return IVA;
     }
 
-    public void setIVA(double IVA) {
-        this.IVA = IVA;
-    }
-
     public double getPrecioFinal() {
         return precioFinal;
     }
@@ -69,14 +82,4 @@ public class Factura {
                 .append("}");
         return sb.toString();
     }
-    
-    public Factura(Maestro maestro, ArrayList<Detalle> detalles, double subtotal, double IVA, double precioFinal) {
-        this.maestro = maestro;
-        this.detalles = detalles;
-        this.subtotal = subtotal;
-        this.IVA = IVA;
-        this.precioFinal = precioFinal;
-    }
-    
-    
 }
