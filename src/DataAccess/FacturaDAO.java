@@ -18,10 +18,11 @@ public class FacturaDAO extends ServicioDB {
     private static final String BUSCAR_FACTURA_POR_ID = "{?=CALL SISTEMAFACTURACION.BUSCAR_FACTURA_POR_ID(?)}";
     private static final String OBTENER_SUBTOTAL_FACTURA = "{CALL SISTEMAFACTURACION.OBTENER_SUBTOTAL_FACTURA(?, ?)}";
 
-    MaestroDAO maestroDAO = new MaestroDAO();
+    MaestroDAO maestroDAO;
 
     public FacturaDAO() {
         super();
+        maestroDAO = new MaestroDAO();
     }
 
     public double calcularSubtotalFactura(int facturaId) throws SQLException, GlobalException, NoDataException {

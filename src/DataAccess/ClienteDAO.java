@@ -38,36 +38,25 @@ public class ClienteDAO extends ServicioDB {
     }
 
     public void insertarCliente(Cliente cliente) throws GlobalException, NoDataException, SQLException {
-        try
-        {
+        try {
             conectar();
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             throw new GlobalException("No se ha localizado el driver");
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new NoDataException("La base de datos no se encuentra disponible");
         }
 
-        try (CallableStatement pstmt = conexion.prepareCall(INSERTAR_CLIENTE))
-        {
+        try (CallableStatement pstmt = conexion.prepareCall(INSERTAR_CLIENTE)) {
             setClienteParameters(pstmt, cliente);
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected == 0) {
                 throw new NoDataException("No se realizó la operación en el Cliente.");
             }
-
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
             throw new GlobalException("Llave duplicada");
-        }
-        finally
-        {
+        } finally {
             desconectar();
         }
     }

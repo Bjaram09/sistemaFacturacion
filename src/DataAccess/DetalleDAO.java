@@ -1,7 +1,6 @@
 package DataAccess;
 
 import Models.Detalle;
-import Models.Factura;
 import Models.Producto;
 import oracle.jdbc.internal.OracleTypes;
 
@@ -18,11 +17,13 @@ public class DetalleDAO extends ServicioDB {
     private static final String LISTAR_DETALLE = "{?=CALL SISTEMAFACTURACION.LISTAR_DETALLE()}";
     private static final String BUSCAR_DETALLE_POR_ID = "{?=CALL SISTEMAFACTURACION.BUSCAR_DETALLE_POR_ID(?)}";
 
-    ProductoDAO productoDAO = new ProductoDAO();
-    FacturaDAO facturaDAO = new FacturaDAO();
+    ProductoDAO productoDAO;
+    FacturaDAO facturaDAO;
     
     public DetalleDAO() {
         super();
+        productoDAO = new ProductoDAO();
+        facturaDAO = new FacturaDAO();
     }
 
     public void insertarDetalle(Detalle detalle, String facturaId) throws GlobalException, NoDataException, SQLException {

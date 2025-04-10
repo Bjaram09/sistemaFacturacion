@@ -1,18 +1,18 @@
-import DataAccess.ServicioDB;
-
-import java.sql.SQLException;
+import Controllers.ClienteController;
+import DataAccess.ClienteDAO;
+import Models.Cliente;
+import Views.RegistrarCliente;
 
 public class Main {
     public static void main(String[] args) {
-        ServicioDB servicioDB = new ServicioDB();
 
-        try {
-            servicioDB.conectar();
-            System.out.println("Conectado exitosamente a la base de datos");
-            servicioDB.desconectar();
-            System.out.println("Desconectado exitosamente de la base de datos");
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        Cliente modelo = new Cliente();
+        RegistrarCliente vista = new RegistrarCliente();
+        ClienteDAO accesoDatos = new ClienteDAO();
+
+        ClienteController clienteController = new ClienteController(vista, modelo, accesoDatos);
+
+
+
     }
 }

@@ -17,10 +17,11 @@ public class MaestroDAO extends ServicioDB {
     private static final String LISTAR_MAESTRO = "{?=CALL SISTEMAFACTURACION.LISTAR_MAESTRO()}";
     private static final String BUSCAR_MAESTRO_POR_ID = "{?=CALL SISTEMAFACTURACION.BUSCAR_MAESTRO_POR_ID(?)}";
 
-    ClienteDAO clienteDAO = new ClienteDAO();
+    ClienteDAO clienteDAO;
 
     public MaestroDAO() {
         super();
+        clienteDAO = new ClienteDAO();
     }
 
     public void insertarMaestro(Maestro maestro) throws GlobalException, NoDataException, SQLException {
@@ -100,8 +101,8 @@ public class MaestroDAO extends ServicioDB {
 
         // Now knowing that both my maestro and client exists on my DB, then I can update them
         try (CallableStatement pstmt = conexion.prepareCall(MODIFICAR_MAESTRO)) {
-            pstmt.setString(1, maestro.getConsecutivoDeFactura());
-            pstmt.setString(2, maestro.getCedulaJuridica());
+            pstmt.setString(1, maestroExistente.getConsecutivoDeFactura());
+            pstmt.setString(2, maestroExistente.getCedulaJuridica());
             pstmt.setString(3, clienteConsultado.getId());
 
             int rowsAffected = pstmt.executeUpdate();
@@ -115,34 +116,23 @@ public class MaestroDAO extends ServicioDB {
         }
     }
 
-    public void eliminarMaestro(String id) throws GlobalException, NoDataException {
-        try
-        {
+    public void eliminarMaestro(String id) throws GlobalException, NoDataException, SQLException {
+        try {
             conectar();
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             throw new GlobalException("No se ha localizado el driver");
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new NoDataException("La base de datos no se encuentra disponible");
         }
-        CallableStatement pstmt = null;
-        try
+
+
+        try (CallableStatement pstmt = conexion.prepareCall(ELIMINAR_MAESTRO))
         {
-            pstmt = conexion.prepareCall(ELIMINAR_MAESTRO);
             pstmt.setString(1, id);
 
-            int resultado = pstmt.executeUpdate();
-
-            if (resultado != 0)
-            {
-                throw new NoDataException("No se realizo el borrado");
-            }
-            else
-            {
-                System.out.println("\nEliminaci�n Satisfactoria!");
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new NoDataException("No se eliminó el cliente. Puede estar referenciado en otras tablas.");
             }
         }
         catch (SQLException e)
@@ -151,18 +141,7 @@ public class MaestroDAO extends ServicioDB {
         }
         finally
         {
-            try
-            {
-                if (pstmt != null)
-                {
-                    pstmt.close();
-                }
-                desconectar();
-            }
-            catch (SQLException e)
-            {
-                throw new GlobalException("Estatutos invalidos o nulos");
-            }
+            desconectar();
         }
     }
 
