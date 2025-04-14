@@ -1,20 +1,18 @@
-package Views;
+package Views.Cliente;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class RegistrarCliente extends JFrame{
-    private JPanel body;
+public class ViewRegistrarCliente extends JFrame{
     private JPanel form;
     private JPanel buttonField;
-    private JPanel inputFields;
-    private JPanel inputs_col_1;
-    private JPanel inputs_col_2;
 
     private JTextField inputID;
     private JTextField inputPrimerApellido;
-    private JTextField inputGenero;
+
+    private JComboBox<String> generoDropdown;
+
     private JTextField inputCorreo;
     private JTextField inputSegundoApellido;
     private JTextField inputTelefonoCelular;
@@ -35,10 +33,8 @@ public class RegistrarCliente extends JFrame{
     private JLabel labelTelefonoCelular;
 
     private JButton btnRegistrar;
-    private JButton btnCancelar;
-    private JPanel titulo;
 
-    public RegistrarCliente() {
+    public ViewRegistrarCliente() {
         setTitle("Registrar Cliente");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,7 +58,9 @@ public class RegistrarCliente extends JFrame{
         inputCorreo = new JTextField(15);
 
         labelGenero = new JLabel("Género:");
-        inputGenero = new JTextField(15);
+        String[] optionsGenero = {"Masculino", "Femenino", "Otro"};
+        generoDropdown = new JComboBox<>(optionsGenero);
+
         labelTelefonoCasa = new JLabel("Teléfono Casa:");
         inputTelefonoCasa = new JTextField(15);
         labelTelefonoCelular = new JLabel("Teléfono Celular:");
@@ -85,7 +83,7 @@ public class RegistrarCliente extends JFrame{
         gbc.gridx = 1; gbc.gridy = 4; form.add(inputCorreo, gbc);
 
         gbc.gridx = 0; gbc.gridy = 5; form.add(labelGenero, gbc);
-        gbc.gridx = 1; gbc.gridy = 5; form.add(inputGenero, gbc);
+        gbc.gridx = 1; gbc.gridy = 5; form.add(generoDropdown, gbc);
         gbc.gridx = 0; gbc.gridy = 6; form.add(labelTelefonoCasa, gbc);
         gbc.gridx = 1; gbc.gridy = 6; form.add(inputTelefonoCasa, gbc);
         gbc.gridx = 0; gbc.gridy = 7; form.add(labelTelefonoCelular, gbc);
@@ -95,13 +93,10 @@ public class RegistrarCliente extends JFrame{
         gbc.gridx = 0; gbc.gridy = 9; form.add(labelEdad, gbc);
         gbc.gridx = 1; gbc.gridy = 9; form.add(inputEdad, gbc);
 
-
         // Buttons
         buttonField = new JPanel();
         btnRegistrar = new JButton("Registrar");
-        btnCancelar = new JButton("Cancelar");
         buttonField.add(btnRegistrar);
-        buttonField.add(btnCancelar);
 
         // Add panels to main frame
         add(form, BorderLayout.CENTER);
@@ -137,21 +132,8 @@ public class RegistrarCliente extends JFrame{
     public String getTelefonoCelular() {
         return inputTelefonoCelular.getText();
     }
-    public String getGenero(){
-        return inputGenero.getText();
-    }
-
-    public void limpiarInputs(){
-        inputID.setText("");
-        inputNombre.setText("");
-        inputPrimerApellido.setText("");
-        inputSegundoApellido.setText("");
-        inputCorreo.setText("");
-        inputTelefonoCasa.setText("");
-        inputDireccion.setText("");
-        inputEdad.setText("");
-        inputTelefonoCelular.setText("");
-        inputGenero.setText("");
+    public String getGenero() {
+        return generoDropdown.getSelectedItem().toString().substring(0, 1);
     }
 
     public void addUpdateListener(ActionListener listener) {

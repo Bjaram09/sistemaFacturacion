@@ -1,11 +1,9 @@
 package DataAccess;
 
 import Models.Cliente;
-import oracle.jdbc.internal.OracleTypes;
+import oracle.jdbc.OracleTypes;
 
-import java.sql.CallableStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,8 +11,8 @@ public class ClienteDAO extends ServicioDB {
     private static final String INSERTAR_CLIENTE = "{CALL SISTEMAFACTURACION.INSERTAR_CLIENTE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
     private static final String MODIFICAR_CLIENTE = "{CALL SISTEMAFACTURACION.MODIFICAR_CLIENTE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
     private static final String ELIMINAR_CLIENTE = "{CALL SISTEMAFACTURACION.ELIMINAR_CLIENTE(?)}";
-    private static final String LISTAR_CLIENTE = "{?=CALL SISTEMAFACTURACION.LISTAR_CLIENTE()}";
-    private static final String BUSCAR_CLIENTE_POR_ID = "{?=CALL SISTEMAFACTURACION.BUSCAR_CLIENTE_POR_ID(?)}";
+    private static final String LISTAR_CLIENTE = "SELECT SISTEMAFACTURACION.LISTAR_CLIENTE FROM DUAL";
+    private static final String BUSCAR_CLIENTE_POR_ID = "SELECT SISTEMAFACTURACION.BUSCAR_CLIENTE_POR_ID(?) FROM DUAL";
 
     public ClienteDAO() {
         super();
@@ -107,20 +105,19 @@ public class ClienteDAO extends ServicioDB {
 
     public void eliminarCliente(String id) throws GlobalException, NoDataException, SQLException {
         try {
-            conectar();
-        } catch (ClassNotFoundException e) {
-            throw new GlobalException("No se ha localizado el driver");
-        } catch (SQLException e) {
-            throw new NoDataException("La base de datos no se encuentra disponible");
-        }
-
-        // Making sure that the client that I want to delete, exists on my DB
-        try {
             buscarCliente(id);
         } catch (NoDataException e) {
             throw new GlobalException("El cliente con ID " + id + " no existe en la base de datos.");
         } catch (SQLException e) {
             throw new GlobalException("Error al consultar Cliente");
+        }
+
+        try {
+            conectar();
+        } catch (ClassNotFoundException e) {
+            throw new GlobalException("No se ha localizado el driver");
+        } catch (SQLException e) {
+            throw new NoDataException("La base de datos no se encuentra disponible");
         }
 
         // perform the deletion
@@ -132,7 +129,7 @@ public class ClienteDAO extends ServicioDB {
                 throw new NoDataException("No se eliminó el cliente. Puede estar referenciado en otras tablas.");
             }
         } catch (SQLException e) {
-            throw new GlobalException("Error al eliminar Cliente");
+            throw new SQLException("Error al eliminar Cliente " + e);
         } finally {
             desconectar();
         }
@@ -144,36 +141,39 @@ public class ClienteDAO extends ServicioDB {
         } catch (ClassNotFoundException e) {
             throw new GlobalException("No se ha localizado el Driver");
         } catch (SQLException e) {
-            throw new NoDataException("La base de datos no se encuentra disponible");
+            throw new NoDataException("La base de datos no se encuentra disponible: " + e.getMessage());
         }
 
         ArrayList<Cliente> coleccion = new ArrayList<>();
 
-        try (CallableStatement pstmt = conexion.prepareCall(LISTAR_CLIENTE)) {
-            pstmt.registerOutParameter(1, OracleTypes.CURSOR);
-            pstmt.execute();
-
-            try (ResultSet rs = (ResultSet) pstmt.getObject(1)) {
-                while (rs.next()) {
+        try (PreparedStatement pstmt = conexion.prepareStatement(LISTAR_CLIENTE); ResultSet rs = pstmt.executeQuery()){
+            while (rs.next()) {
+                ResultSet clientesCursor = (ResultSet) rs.getObject(1);
+                while (clientesCursor.next()) {
                     Cliente cliente = new Cliente(
-                            rs.getString("ID"),
-                            rs.getString("NOMBRE"),
-                            rs.getString("PRIMERAPELLIDO"),
-                            rs.getString("SEGUNDOAPELLIDO"),
-                            rs.getString("GENERO"),
-                            rs.getString("DIRECCION"),
-                            rs.getInt("EDAD"),
-                            rs.getString("CORREOELECTRONICO"),
-                            rs.getString("TELEFONOCASA"),
-                            rs.getString("TELEFONOCELULAR")
+                            clientesCursor.getString("ID"),
+                            clientesCursor.getString("NOMBRE"),
+                            clientesCursor.getString("PRIMERAPELLIDO"),
+                            clientesCursor.getString("SEGUNDOAPELLIDO"),
+                            clientesCursor.getString("GENERO"),
+                            clientesCursor.getString("DIRECCION"),
+                            clientesCursor.getInt("EDAD"),
+                            clientesCursor.getString("CORREOELECTRONICO"),
+                            clientesCursor.getString("TELEFONOCASA"),
+                            clientesCursor.getString("TELEFONOCELULAR")
                     );
                     coleccion.add(cliente);
                 }
             }
         } catch (SQLException e) {
-            throw new GlobalException("Error al ejecutar consulta");
+            e.printStackTrace(); // Log full stack trace
+            throw new GlobalException("Error al ejecutar consulta: " + e.getMessage());
         } finally {
-            desconectar();
+            try {
+                desconectar();
+            } catch (SQLException e) {
+                System.err.println("Error al desconectar: " + e.getMessage());
+            }
         }
 
         if (coleccion.isEmpty()) {
@@ -193,29 +193,30 @@ public class ClienteDAO extends ServicioDB {
         }
 
         Cliente cliente = null;
-        try (CallableStatement pstmt = conexion.prepareCall(BUSCAR_CLIENTE_POR_ID)) {
-            pstmt.registerOutParameter(1, OracleTypes.CURSOR);
-            pstmt.setString(2, id);
-            pstmt.execute();
 
-            try (ResultSet rs = (ResultSet) pstmt.getObject(1)) {
+        try (PreparedStatement pstmt = conexion.prepareStatement(BUSCAR_CLIENTE_POR_ID)) {
+            pstmt.setString(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    cliente = new Cliente(
-                            rs.getString("ID"),
-                            rs.getString("NOMBRE"),
-                            rs.getString("PRIMERAPELLIDO"),
-                            rs.getString("SEGUNDOAPELLIDO"),
-                            rs.getString("GENERO"),
-                            rs.getString("DIRECCION"),
-                            rs.getInt("EDAD"),
-                            rs.getString("CORREOELECTRONICO"),
-                            rs.getString("TELEFONOCASA"),
-                            rs.getString("TELEFONOCELULAR")
-                    );
+                    ResultSet clienteCursor = (ResultSet) rs.getObject(1);
+                    if (clienteCursor.next()) {
+                        cliente = new Cliente(
+                            clienteCursor.getString("ID"),
+                            clienteCursor.getString("NOMBRE"),
+                            clienteCursor.getString("PRIMERAPELLIDO"),
+                            clienteCursor.getString("SEGUNDOAPELLIDO"),
+                            clienteCursor.getString("GENERO"),
+                            clienteCursor.getString("DIRECCION"),
+                            clienteCursor.getInt("EDAD"),
+                            clienteCursor.getString("CORREOELECTRONICO"),
+                            clienteCursor.getString("TELEFONOCASA"),
+                            clienteCursor.getString("TELEFONOCELULAR")
+                        );
+                    }
                 }
             }
         } catch (SQLException e) {
-            throw new GlobalException("Sentencia no válida");
+            throw new GlobalException("Sentencia no válida " + e);
         } finally {
             desconectar();
         }
