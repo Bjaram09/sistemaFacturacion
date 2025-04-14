@@ -1,7 +1,6 @@
 package DataAccess;
 
 import Models.Cliente;
-import oracle.jdbc.OracleTypes;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -60,31 +59,26 @@ public class ClienteDAO extends ServicioDB {
     }
 
     public void modificarCliente(Cliente cliente) throws GlobalException, NoDataException, SQLException {
-        try
-        {
-            conectar();
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new GlobalException("No se ha localizado el driver");
-        }
-        catch (SQLException e)
-        {
-            throw new NoDataException("La base de datos no se encuentra disponible");
-        }
-
         Cliente clienteExistente;
         try {
             clienteExistente = buscarCliente(cliente.getId());
         } catch (NoDataException e) {
-            throw new GlobalException("El Maestro con ID " + cliente.getId() + " no existe en la base de datos.");
+            throw new GlobalException("El Cliente con ID " + cliente.getId() + " no existe en la base de datos.");
         } catch (SQLException e) {
-            throw new GlobalException("Error al consultar Maestro");
+            throw new GlobalException("Error al consultar Cliente");
+        }
+
+        try {
+            conectar();
+        } catch (ClassNotFoundException e) {
+            throw new GlobalException("No se ha localizado el driver");
+        } catch (SQLException e) {
+            throw new NoDataException("La base de datos no se encuentra disponible");
         }
 
         try (CallableStatement pstmt = conexion.prepareCall(MODIFICAR_CLIENTE))
         {
-            setClienteParameters(pstmt, clienteExistente);
+            setClienteParameters(pstmt, cliente);
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected == 0) {
@@ -93,12 +87,9 @@ public class ClienteDAO extends ServicioDB {
                 System.out.println("Cliente modificado exitosamente con ID: " + cliente.getId());
             }
         }
-        catch (SQLException e)
-        {
+        catch (SQLException e) {
             throw new GlobalException("Sentencia no valida");
-        }
-        finally
-        {
+        } finally {
             desconectar();
         }
     }
@@ -120,7 +111,6 @@ public class ClienteDAO extends ServicioDB {
             throw new NoDataException("La base de datos no se encuentra disponible");
         }
 
-        // perform the deletion
         try (CallableStatement pstmt = conexion.prepareCall(ELIMINAR_CLIENTE)) {
             pstmt.setString(1, id);
 

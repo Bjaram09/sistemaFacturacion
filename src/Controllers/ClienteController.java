@@ -63,12 +63,70 @@ public class ClienteController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Delete button clicked!");
-                if (e.getSource() instanceof ViewCliente.ButtonEditor) {
-                    ViewCliente.ButtonEditor editor = (ViewCliente.ButtonEditor) e.getSource();
+                if (e.getSource() instanceof ViewCliente.ActionsEditor) {
+                    ViewCliente.ActionsEditor editor = (ViewCliente.ActionsEditor) e.getSource();
                     Cliente clienteAEliminar = editor.getCliente();
                     if (clienteAEliminar != null) {
                         System.out.println("Trying to delete client: " + clienteAEliminar.getNombre());
                         eliminarCliente(clienteAEliminar);
+                    }
+                }
+            }
+        });
+
+        // Set up update listener
+        viewCliente.setUpdateListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Update button clicked!");
+                if (e.getSource() instanceof ViewCliente.ActionsEditor) {
+                    ViewCliente.ActionsEditor editor = (ViewCliente.ActionsEditor) e.getSource();
+                    Cliente clienteAActualizar = editor.getCliente();
+                    if (clienteAActualizar != null) {
+                        System.out.println("Trying to update client: " + clienteAActualizar.getNombre());
+                        ViewRegistrarCliente registrarCliente = new ViewRegistrarCliente();
+                        registrarCliente.setTitle("Actualizar Cliente");
+                        registrarCliente.getBtnRegistrar().setText("Actualizar");
+                        
+                        // Populate fields with client data
+                        registrarCliente.setID(clienteAActualizar.getId());
+                        registrarCliente.setNombre(clienteAActualizar.getNombre());
+                        registrarCliente.setPrimerApellido(clienteAActualizar.getPrimerApellido());
+                        registrarCliente.setSegundoApellido(clienteAActualizar.getSegundoApellido());
+                        registrarCliente.setGenero(clienteAActualizar.getGenero());
+                        registrarCliente.setDireccion(clienteAActualizar.getDireccion());
+                        registrarCliente.setEdad(clienteAActualizar.getEdad());
+                        registrarCliente.setCorreo(clienteAActualizar.getCorreoElectronico());
+                        registrarCliente.setTelefonoCasa(clienteAActualizar.getTelefonoCasa());
+                        registrarCliente.setTelefonoCelular(clienteAActualizar.getTelefonoCelular());
+                        
+                        // Disable ID field
+                        registrarCliente.getTxtID().setEnabled(false);
+                        
+                        registrarCliente.addUpdateListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                cliente.setId(registrarCliente.getID());
+                                cliente.setNombre(registrarCliente.getNombre());
+                                cliente.setPrimerApellido(registrarCliente.getPrimerApellido());
+                                cliente.setSegundoApellido(registrarCliente.getSegundoApellido());
+                                cliente.setCorreoElectronico(registrarCliente.getCorreo());
+                                cliente.setDireccion(registrarCliente.getDireccion());
+                                cliente.setEdad(registrarCliente.getEdad());
+                                cliente.setGenero(registrarCliente.getGenero());
+                                cliente.setTelefonoCelular(registrarCliente.getTelefonoCelular());
+                                cliente.setTelefonoCasa(registrarCliente.getTelefonoCasa());
+
+                                try {
+                                    clienteDAO.modificarCliente(cliente);
+                                    JOptionPane.showMessageDialog(null, "Cliente actualizado exitosamente!");
+                                    registrarCliente.dispose();
+                                    cargarClientes();
+                                } catch (GlobalException | NoDataException | SQLException ex) {
+                                    JOptionPane.showMessageDialog(null, "Error al actualizar el cliente - " + ex.getMessage());
+                                }
+                            }
+                        });
                     }
                 }
             }
