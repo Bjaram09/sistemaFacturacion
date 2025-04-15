@@ -5,12 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class ViewRegistrarCliente extends JFrame {
-    // Reuse the same color scheme from ViewCliente
-    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private static final Color SECONDARY_COLOR = new Color(52, 152, 219);
-    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
-    private static final Color INPUT_BACKGROUND = Color.WHITE;
-
     private JPanel form;
     private JPanel buttonField;
 
@@ -38,18 +32,22 @@ public class ViewRegistrarCliente extends JFrame {
 
     private JButton btnRegistrar;
 
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color INPUT_BACKGROUND = Color.WHITE;
+
     public ViewRegistrarCliente() {
+        super();
         setTitle("Registrar Cliente");
-        setSize(600, 700);
+        setSize(600, 800);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getContentPane().setBackground(BACKGROUND_COLOR);
         setLayout(new BorderLayout());
 
-        // Create header panel
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         headerPanel.setBackground(PRIMARY_COLOR);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        
+
         JLabel titleLabel = new JLabel("Registrar Cliente");
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
@@ -64,7 +62,6 @@ public class ViewRegistrarCliente extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        // Create and style labels
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         labelID = createStyledLabel("ID:", labelFont);
         labelNombre = createStyledLabel("Nombre:", labelFont);
@@ -77,7 +74,6 @@ public class ViewRegistrarCliente extends JFrame {
         labelDireccion = createStyledLabel("Dirección:", labelFont);
         labelEdad = createStyledLabel("Edad:", labelFont);
 
-        // Create and style input fields
         Font inputFont = new Font("Segoe UI", Font.PLAIN, 14);
         inputID = createStyledTextField(inputFont);
         inputNombre = createStyledTextField(inputFont);
@@ -89,17 +85,11 @@ public class ViewRegistrarCliente extends JFrame {
         inputDireccion = createStyledTextField(inputFont);
         inputEdad = createStyledTextField(inputFont);
 
-        // Style dropdown
         String[] optionsGenero = {"Masculino", "Femenino", "Otro"};
         generoDropdown = new JComboBox<>(optionsGenero);
         generoDropdown.setFont(inputFont);
         generoDropdown.setBackground(INPUT_BACKGROUND);
-        generoDropdown.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
 
-        // Position elements in grid
         int row = 0;
         addFormRow(gbc, labelID, inputID, row++);
         addFormRow(gbc, labelNombre, inputNombre, row++);
@@ -112,11 +102,10 @@ public class ViewRegistrarCliente extends JFrame {
         addFormRow(gbc, labelDireccion, inputDireccion, row++);
         addFormRow(gbc, labelEdad, inputEdad, row++);
 
-        // Style and add register button
         buttonField = new JPanel();
         buttonField.setBackground(BACKGROUND_COLOR);
         buttonField.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
+
         btnRegistrar = new JButton("Registrar");
         btnRegistrar.setBackground(PRIMARY_COLOR);
         btnRegistrar.setForeground(Color.WHITE);
@@ -144,8 +133,8 @@ public class ViewRegistrarCliente extends JFrame {
         textField.setFont(font);
         textField.setBackground(INPUT_BACKGROUND);
         textField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         return textField;
     }
@@ -154,7 +143,7 @@ public class ViewRegistrarCliente extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = row;
         form.add(label, gbc);
-        
+
         gbc.gridx = 1;
         form.add(component, gbc);
     }
@@ -195,14 +184,14 @@ public class ViewRegistrarCliente extends JFrame {
 
     public void setID(String id) {
         inputID.setText(id);
-    }   
+    }
     public void setNombre(String nombre) {
         inputNombre.setText(nombre);
     }
     public void setPrimerApellido(String primerApellido) {
         inputPrimerApellido.setText(primerApellido);
-    }   
-    public void setSegundoApellido(String segundoApellido) {    
+    }
+    public void setSegundoApellido(String segundoApellido) {
         inputSegundoApellido.setText(segundoApellido);
     }
     public void setCorreo(String correo) {
@@ -222,16 +211,11 @@ public class ViewRegistrarCliente extends JFrame {
     }
     public void setGenero(String genero) {
         generoDropdown.setSelectedItem(genero);
-    }   
+    }
 
     public JTextField getTxtID() {
         return inputID;
     }
-
-    public void addRegistrarListener(ActionListener listener) {
-        btnRegistrar.addActionListener(listener);
-    }
-            
 
     public void addUpdateListener(ActionListener listener) {
         btnRegistrar.addActionListener(listener);

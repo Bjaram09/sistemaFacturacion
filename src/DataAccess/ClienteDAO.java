@@ -76,8 +76,7 @@ public class ClienteDAO extends ServicioDB {
             throw new NoDataException("La base de datos no se encuentra disponible");
         }
 
-        try (CallableStatement pstmt = conexion.prepareCall(MODIFICAR_CLIENTE))
-        {
+        try (CallableStatement pstmt = conexion.prepareCall(MODIFICAR_CLIENTE)) {
             setClienteParameters(pstmt, cliente);
 
             int rowsAffected = pstmt.executeUpdate();
@@ -156,14 +155,10 @@ public class ClienteDAO extends ServicioDB {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Log full stack trace
+            e.printStackTrace();
             throw new GlobalException("Error al ejecutar consulta: " + e.getMessage());
         } finally {
-            try {
-                desconectar();
-            } catch (SQLException e) {
-                System.err.println("Error al desconectar: " + e.getMessage());
-            }
+            desconectar();
         }
 
         if (coleccion.isEmpty()) {

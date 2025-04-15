@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Collection;
 
+
 public class ViewCliente extends JFrame {
     private DefaultTableModel modelo;
     private JTable tablaClientes;
@@ -15,7 +16,6 @@ public class ViewCliente extends JFrame {
     private ActionListener deleteListener;
     private ActionListener updateListener;
 
-    // Modern color scheme
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185); // Blue
     private static final Color SECONDARY_COLOR = new Color(52, 152, 219); // Lighter Blue
     private static final Color ACCENT_COLOR = new Color(231, 76, 60); // Red
@@ -35,7 +35,7 @@ public class ViewCliente extends JFrame {
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         headerPanel.setBackground(PRIMARY_COLOR);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        
+
         JLabel titleLabel = new JLabel("Lista de Clientes");
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
@@ -56,8 +56,7 @@ public class ViewCliente extends JFrame {
         tablaClientes.setShowGrid(true);
         tablaClientes.setGridColor(new Color(230, 230, 230));
         tablaClientes.setBackground(TABLE_ROW_COLOR);
-        tablaClientes.setSelectionBackground(SECONDARY_COLOR);
-        tablaClientes.setSelectionForeground(Color.WHITE);
+        tablaClientes.setSelectionForeground(ACCENT_COLOR);
         tablaClientes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
         // Style the table header
@@ -108,7 +107,7 @@ public class ViewCliente extends JFrame {
         setVisible(true);
     }
 
-    public void setClientes(Collection<Cliente> clientes) {
+    public void listarClientes(Collection<Cliente> clientes) {
         modelo.setRowCount(0);
         for (Cliente cliente : clientes) {
             String genero = "";
@@ -121,14 +120,14 @@ public class ViewCliente extends JFrame {
             }
 
             Object[] row = {
-                cliente.getId(),
-                cliente.getNombre(),
-                cliente.getPrimerApellido(),
-                cliente.getSegundoApellido(),
-                genero,
-                cliente.getEdad(),
+                    cliente.getId(),
+                    cliente.getNombre(),
+                    cliente.getPrimerApellido(),
+                    cliente.getSegundoApellido(),
+                    genero,
+                    cliente.getEdad(),
                     cliente.getTelefonoCelular(),
-                cliente
+                    cliente
             };
             modelo.addRow(row);
         }
@@ -146,6 +145,10 @@ public class ViewCliente extends JFrame {
         this.updateListener = listener;
     }
 
+    public JTable getTablaClientes() {
+        return tablaClientes;
+    }
+
     private class ActionsRenderer extends JPanel implements TableCellRenderer {
         private JButton deleteButton;
         private JButton updateButton;
@@ -153,7 +156,7 @@ public class ViewCliente extends JFrame {
         public ActionsRenderer() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
             setBackground(TABLE_ROW_COLOR);
-            
+
             deleteButton = new JButton("Eliminar");
             deleteButton.setBackground(ACCENT_COLOR);
             deleteButton.setForeground(Color.WHITE);
@@ -161,7 +164,7 @@ public class ViewCliente extends JFrame {
             deleteButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
             deleteButton.setFocusPainted(false);
             deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            
+
             updateButton = new JButton("Actualizar");
             updateButton.setBackground(SECONDARY_COLOR);
             updateButton.setForeground(Color.WHITE);
@@ -169,7 +172,7 @@ public class ViewCliente extends JFrame {
             updateButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
             updateButton.setFocusPainted(false);
             updateButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            
+
             add(deleteButton);
             add(updateButton);
         }
@@ -192,7 +195,7 @@ public class ViewCliente extends JFrame {
             super(textField);
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
             panel.setBackground(TABLE_ROW_COLOR);
-            
+
             deleteButton = new JButton("Eliminar");
             deleteButton.setBackground(ACCENT_COLOR);
             deleteButton.setForeground(Color.WHITE);
@@ -207,7 +210,7 @@ public class ViewCliente extends JFrame {
                 }
                 fireEditingStopped();
             });
-            
+
             updateButton = new JButton("Actualizar");
             updateButton.setBackground(SECONDARY_COLOR);
             updateButton.setForeground(Color.WHITE);
@@ -222,7 +225,7 @@ public class ViewCliente extends JFrame {
                 }
                 fireEditingStopped();
             });
-            
+
             panel.add(deleteButton);
             panel.add(updateButton);
         }
@@ -250,4 +253,6 @@ public class ViewCliente extends JFrame {
             return super.stopCellEditing();
         }
     }
+
+
 }
